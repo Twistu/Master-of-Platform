@@ -46,13 +46,13 @@ int main(void) {
 
 	
 	int count = 0;
-	int posx = 20, posy = 665;
+	int posx = 20, posy = 668;
 	int posxtlo = 0, posytlo = 0;
 	bool moveleft = false, moveright = false; bool moveup = false; bool done = false;
 	ALLEGRO_FONT *font44 = al_load_ttf_font("Arial.ttf", 44, 0);
 	
 	al_flip_display();
-	al_draw_bitmap(tlo, 0, 0, 0);
+	
 	while (done!=true) {
 		
 		ALLEGRO_EVENT ev;
@@ -64,9 +64,7 @@ int main(void) {
 				done = true;
 			
 			switch (ev.keyboard.keycode) {
-			case ALLEGRO_KEY_SPACE:
-				moveup = true;
-				break;
+
 			case ALLEGRO_KEY_LEFT:
 				moveleft = true;
 				break;
@@ -79,21 +77,27 @@ int main(void) {
 			count++;
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
 
-			if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE)
-				posy -= 20;
-			if (moveleft) {
-				posx -= 2;
-			}
-			if (moveright) {
-				posx += 2;
-			}
-
-			al_draw_bitmap(tlo, 0, 0, 0);
+			
+				if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE){
+					posy -= 20;
+				}
+				if (moveleft) {
+					if (posx > 0){
+						posx -= 2;
+					}
+				}
+				if (moveright) {
+					if (posx < 736){
+						posx += 2;
+					}
+				}
+			
 			al_draw_bitmap(hero, posx, posy, 0);
 			al_flip_display();
 			
 		}
-
+		//al_draw_bitmap(tlo, 0, 0, 0);
+		//al_flip_display();
 		al_clear_to_color(al_map_rgb(0, 0, 0));
 		if (ev.type == ALLEGRO_EVENT_KEY_UP)
 		{
@@ -110,9 +114,6 @@ int main(void) {
 				break;
 			}
 		}
-		
-		
-
 	}
 
 
