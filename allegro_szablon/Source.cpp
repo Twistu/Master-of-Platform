@@ -50,7 +50,7 @@ int main(void) {
 	int posxtlo = 0, posytlo = 0;
 	bool moveleft = false, moveright = false; bool moveup = false; bool done = false;
 	ALLEGRO_FONT *font44 = al_load_ttf_font("Arial.ttf", 44, 0);
-
+	
 	al_flip_display();
 	al_draw_bitmap(tlo, 0, 0, 0);
 	while (done!=true) {
