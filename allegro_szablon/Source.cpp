@@ -84,17 +84,19 @@ int main(void) {
 				if (moveleft) {
 					if (posx > 0){
 						posx -= 2;
+						al_draw_bitmap(hero, posx, posy, 1);
 					}
 				}
 				if (moveright) {
-					if (posx < 736){
+					 if (posx < 676){
 						posx += 2;
 					}
 				}
-			
-			al_draw_bitmap(hero, posx, posy, 0);
-			al_flip_display();
-			
+				if (!moveleft){
+					al_draw_bitmap(hero, posx, posy, 0);
+					
+				}
+				al_flip_display();
 		}
 		//al_draw_bitmap(tlo, 0, 0, 0);
 		//al_flip_display();
@@ -115,9 +117,6 @@ int main(void) {
 			}
 		}
 	}
-
-
-
 	//al_rest(20.0);
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);
