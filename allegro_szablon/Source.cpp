@@ -8,8 +8,9 @@
 const float FPS = 60;
 
 int main(void) {
-	int width = 736;
-	int height = 960;
+	int width =960;
+	int height = 736;
+	bool render = false;
 
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_DISPLAY_MODE disp_data;
@@ -33,8 +34,8 @@ int main(void) {
 
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
 
-	al_set_new_display_flags(ALLEGRO_FULLSCREEN);
-	display = al_create_display(disp_data.width, disp_data.height);
+	//al_set_new_display_flags(ALLEGRO_FULLSCREEN);
+	display = al_create_display(width,height);
 	if (!display)
 		return -1;
 
@@ -64,7 +65,9 @@ int main(void) {
 				done = true;
 			
 			switch (ev.keyboard.keycode) {
-
+			case ALLEGRO_KEY_UP:
+				moveup = true;
+				break;
 			case ALLEGRO_KEY_LEFT:
 				moveleft = true;
 				break;
@@ -73,34 +76,10 @@ int main(void) {
 				break;
 			}
 		}
-		if (ev.type == ALLEGRO_EVENT_TIMER) {
-			count++;
-			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
-
-			
-				if (ev.keyboard.keycode == ALLEGRO_KEY_SPACE){
-					posy -= 20;
-				}
-				if (moveleft) {
-					if (posx > 0){
-						posx -= 2;
-						al_draw_bitmap(hero, posx, posy, 1);
-					}
-				}
-				if (moveright) {
-					 if (posx < 676){
-						posx += 2;
-					}
-				}
-				if (!moveleft){
-					al_draw_bitmap(hero, posx, posy, 0);
-					
-				}
-				al_flip_display();
-		}
+		
 		//al_draw_bitmap(tlo, 0, 0, 0);
 		//al_flip_display();
-		al_clear_to_color(al_map_rgb(0, 0, 0));
+		
 		if (ev.type == ALLEGRO_EVENT_KEY_UP)
 		{
 			if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
@@ -108,6 +87,9 @@ int main(void) {
 
 			switch (ev.keyboard.keycode) {
 
+			case ALLEGRO_KEY_UP:
+				moveup = false;
+				break;
 			case ALLEGRO_KEY_LEFT:
 				moveleft = false;
 				break;
@@ -116,6 +98,36 @@ int main(void) {
 				break;
 			}
 		}
+		if (ev.type == ALLEGRO_EVENT_TIMER) {
+			
+			count++;
+			render = true;	
+			if (moveup) {
+				posy -= 2;
+			}
+			if (moveleft) {
+				if (posx > 0){
+					posx -= 2;
+				}
+			}
+			if (moveright) {
+				if (posx < 643){
+					posx += 2;
+				}
+			}
+
+		}
+		if (render && al_is_event_queue_empty(event_queue)){
+			al_clear_to_color(al_map_rgb(0, 0, 0));
+			al_draw_bitmap(tlo, 0, 0, 0);
+			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
+			if (!moveleft){
+				al_draw_bitmap(hero, posx, posy, 0);
+
+			}
+			else{ al_draw_bitmap(hero, posx, posy, 1); }	
+		}
+		al_flip_display();
 	}
 	//al_rest(20.0);
 	al_destroy_event_queue(event_queue);
