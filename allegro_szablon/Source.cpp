@@ -57,6 +57,8 @@ int main(void) {
 	
 	while (done!=true) {
 
+
+
 		if (posx > 716){			// spadanie za pierwszym schodem
 			podloga = 669;
 			if (posy > 640){
@@ -70,7 +72,7 @@ int main(void) {
 		else if (posy>640){					// pierwszy schodek lewy bok
 			pom1 = 642;
 		}
-		if (posx > 642 && posx < 710){		// podloga na pierwszym schodku
+		if (posx > 642 && posx < 712){		// podloga na pierwszym schodku
 			podloga = 640;
 		}
 		else if (posx < 642 && posy > 512) // podloga na samym dole // posy--> tutaj bedzie ten element wyzej tymczasowa 550
@@ -94,10 +96,9 @@ int main(void) {
 		///
 		/// Do tego momentu jest pierwszy poziom podloga na dole oraz dwa schody dobrze zrobione , ewentualne poprawki kosmetyczne w póŸniejszyc fazach
 		///
-		if (posy <= 512 && posx < 687 && posx > 115){		/// I wisz¹ca p³aszczyzna ( liczone od do³u )
+		if (posy <= 512 && posx < 687 && posx > 115){		/// I wisz¹ca p³aszczyzna 
 			podloga = 512;
 		}
-		else podloga = 669;
 		if (posy <= 448 && posx < 112 && posx > 20){		/// II wisz¹ca p³aszczyzna 
 			podloga = 448;
 		}
@@ -107,8 +108,14 @@ int main(void) {
 		if (posy <= 384 && posx < 354 && posx > 259){		/// IV wisz¹ca p³aszczyzna 
 			podloga = 384;
 		}
-		if (posy <= 384 && posx < 619 && posx > 434){		/// V wisz¹ca p³aszczyzna 
+		if (posy <= 384 && posx < 619 && posx > 434){		/// V wisz¹ca p³aszczyzna ( liczone od do³u )
 			podloga = 384;
+		}
+		if (posy == 512 && posx < 115){			// spadanie za I plaszczyzna
+			podloga = 669;
+		}
+		if (posy == 448 && posx < 20){			// spadanie za I plaszczyzna
+			podloga = 669;
 		}
 
 		if (posy < podloga){			// gravity
