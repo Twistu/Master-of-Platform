@@ -45,8 +45,9 @@ int main(void) {
 
 	al_start_timer(timer);
 
-	
-	int count = 0;
+	int kierunek = 0;
+	int count = 0, podloga = 669;
+	int pom1 = 642, pom2=0;		// pomocnicze pomagaj¹ce wykrywac kolizje
 	int posx = 20, posy = 668;
 	int posxtlo = 0, posytlo = 0;
 	bool moveleft = false, moveright = false; bool moveup = false; bool done = false;
@@ -55,7 +56,64 @@ int main(void) {
 	al_flip_display();
 	
 	while (done!=true) {
-		
+
+		if (posx > 716){			// spadanie za pierwszym schodem
+			podloga = 669;
+			if (posy > 640){
+				pom2 = 720;
+			}
+			else pom2 = 0;
+		}
+		if (posy<640 || posx> 716){				// sciana drugiego schoda
+			pom1 = 738;
+		}
+		else if (posy>640){					// pierwszy schodek lewy bok
+			pom1 = 642;
+		}
+		if (posx > 642 && posx < 710){		// podloga na pierwszym schodku
+			podloga = 640;
+		}
+		else if (posx < 642 && posy > 512) // podloga na samym dole // posy--> tutaj bedzie ten element wyzej tymczasowa 550
+		{
+			podloga = 669;
+		}
+		if (posy <= 579||posx>=813){				// ustalenie granicy pojscia w prawo nad drugim schodem
+			pom1 = 925;
+		}
+		if (posx>813){								// prawy bok drugiego schoda oraz ustawienie podlogi za schodem 
+			podloga = 669;
+			if (posy > 579){
+				pom2 = 818;
+			}
+			else pom2 = 0;
+		}
+
+		if (posx > 738 && posx < 813){		// podloga na drugim schodku schodku
+			podloga = 579;
+		}
+		///
+		/// Do tego momentu jest pierwszy poziom podloga na dole oraz dwa schody dobrze zrobione , ewentualne poprawki kosmetyczne w póŸniejszyc fazach
+		///
+		if (posy <= 512 && posx < 687 && posx > 115){		/// I wisz¹ca p³aszczyzna ( liczone od do³u )
+			podloga = 512;
+		}
+		else podloga = 669;
+		if (posy <= 448 && posx < 112 && posx > 20){		/// II wisz¹ca p³aszczyzna 
+			podloga = 448;
+		}
+		if (posy <= 406 && posx < 229 && posx > 164){		/// III wisz¹ca p³aszczyzna 
+			podloga = 406;
+		}
+		if (posy <= 384 && posx < 354 && posx > 259){		/// IV wisz¹ca p³aszczyzna 
+			podloga = 384;
+		}
+		if (posy <= 384 && posx < 619 && posx > 434){		/// V wisz¹ca p³aszczyzna 
+			podloga = 384;
+		}
+
+		if (posy < podloga){			// gravity
+			posy ++;
+		}
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
 		
@@ -106,12 +164,14 @@ int main(void) {
 				posy -= 2;
 			}
 			if (moveleft) {
-				if (posx > 0){
+				kierunek = 1;
+				if (posx > pom2){
 					posx -= 2;
 				}
 			}
 			if (moveright) {
-				if (posx < 643){
+				kierunek = 0;
+				if (posx < pom1){
 					posx += 2;
 				}
 			}
@@ -121,11 +181,7 @@ int main(void) {
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_draw_bitmap(tlo, 0, 0, 0);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
-			if (!moveleft){
-				al_draw_bitmap(hero, posx, posy, 0);
-
-			}
-			else{ al_draw_bitmap(hero, posx, posy, 1); }	
+			al_draw_bitmap(hero, posx, posy, kierunek);
 		}
 		al_flip_display();
 	}
