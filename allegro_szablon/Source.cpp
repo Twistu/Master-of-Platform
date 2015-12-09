@@ -23,6 +23,7 @@ int main(void) {
 	ALLEGRO_BITMAP *hero4 = NULL;
 	ALLEGRO_BITMAP *hero5 = NULL;
 	ALLEGRO_BITMAP *coin = NULL;
+	ALLEGRO_BITMAP *skok = NULL;
 
 	al_init();
 	al_init_primitives_addon();
@@ -35,11 +36,12 @@ int main(void) {
 
 	tlo = al_load_bitmap("tlo.jpg");
 	hero = al_load_bitmap("hero.png");
-	hero2 = al_load_bitmap("hero2.jpg");
-	hero3 = al_load_bitmap("hero3.jpg");
-	hero4 = al_load_bitmap("hero4.jpg");
-	hero5 = al_load_bitmap("hero5.jpg");
+	hero2 = al_load_bitmap("hero2.png");
+	hero3 = al_load_bitmap("hero3.png");
+	hero4 = al_load_bitmap("hero4.png");
+	hero5 = al_load_bitmap("hero5.png");
 	coin = al_load_bitmap("coin.png");
+	skok = al_load_bitmap("skok.png");
 	//al_convert_mask_to_alpha(coin, al_map_rgb(255, 255, 255));
 
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
@@ -54,13 +56,14 @@ int main(void) {
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
 	al_start_timer(timer);
-
+	int jump = 0;
 	int NOcoin[5];
 	int tubylem[5];
 	for (int i = 0; i < 5; i++){
 		NOcoin[i] = 0;
 		tubylem[i] = 0;
 	}
+	int pom = 0;
 	int liczmonety = 0;
 	int frame = 0;
 	int kierunek = 0;
@@ -221,7 +224,7 @@ int main(void) {
 		//
 		//
 		// dojscie do konca :)
-		if (posx > 570 && posx < 617 && posy > 340 && posy <= 390){
+		if (posx > 570 && posx < 617 && posy > 360 && posy <= 390){
 			done=true;
 		}
 		ALLEGRO_EVENT ev;
@@ -263,27 +266,33 @@ int main(void) {
 				break;
 			}
 		}
+		
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
-			
+
 			count++;
-			render = true;	
+			render = true;
 			if (moveup) {
+				jump = 1;
 				posy -= 3;
 			}
+			else{ jump = 0; }
 			if (moveleft) {
+				pom = 1;
 				kierunek = 1;
-				frame = (frame + 1) % 100;
+				frame = (frame + 3) % 100;
 				if (posx > pom2){
 					posx -= 2;
 				}
 			}
 			if (moveright) {
-				frame = (frame + 1) % 100;
+				pom = 1;
+				frame = (frame + 3) % 100;
 				kierunek = 0;
 				if (posx < pom1){
 					posx += 2;
 				}
 			}
+			else if (!moveright && !moveleft){ pom = 0; }
 
 		}
 		if (render && al_is_event_queue_empty(event_queue)){
@@ -291,7 +300,26 @@ int main(void) {
 			al_draw_bitmap(tlo, 0, 0, 0);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 50, 0, "Ilosc monet: %i", liczmonety);
-			al_draw_bitmap(hero, posx, posy, kierunek);
+			if (jump == 1){ 
+				al_draw_bitmap(skok, posx, posy, kierunek);
+			}
+			else{
+				if (frame == 0 || pom==0){
+					al_draw_bitmap(hero, posx, posy, kierunek);
+				}
+				if (frame > 0 && frame <= 25 && pom==1){
+					al_draw_bitmap(hero5, posx, posy, kierunek);
+				}
+				if (frame > 25 && frame <= 50 && pom == 1){
+					al_draw_bitmap(hero4, posx, posy, kierunek);
+				}
+				if (frame > 50 && frame <= 75 && pom == 1){
+					al_draw_bitmap(hero3, posx, posy, kierunek);
+				}
+				if (frame > 75 && frame < 100 && pom == 1){
+					al_draw_bitmap(hero2, posx, posy, kierunek);
+				}
+			}
 			if (NOcoin[0] == 0){ 
 				al_draw_bitmap(coin, 300, 675, 0); 
 			}
