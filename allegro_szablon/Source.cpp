@@ -57,11 +57,9 @@ int main(void) {
 
 	al_start_timer(timer);
 	int jump = 0;
-	int NOcoin[5];
-	int tubylem[5];
-	for (int i = 0; i < 5; i++){
+	int NOcoin[7];
+	for (int i = 0; i < 7; i++){
 		NOcoin[i] = 0;
-		tubylem[i] = 0;
 	}
 	int pom = 0;
 	int liczmonety = 0;
@@ -70,14 +68,27 @@ int main(void) {
 	int count = 0, podloga = 669;
 	int pom1 = 642, pom2=0;		// pomocnicze pomagaj¹ce wykrywac kolizje z lewej(pom2) i prawej strony (pom1)
 	int posx = 20, posy = 668;
-	int posxtlo = 0, posytlo = 0;
-	bool moveleft = false, moveright = false; bool moveup = false; bool done = false;
+	bool moveleft = false, moveright = false; bool moveup = false; bool done = false; bool reset = false;
 	ALLEGRO_FONT *font44 = al_load_ttf_font("Arial.ttf", 44, 0);
 	
 	al_flip_display();
 	
 	while (done!=true) {
-
+		if (reset){
+			jump = 0;
+			NOcoin[7];
+			for (int i = 0; i < 7; i++){
+				NOcoin[i] = 0;
+			}
+			pom = 0;
+			liczmonety = 0;
+			frame = 0;
+			kierunek = 0;
+			count = 0, podloga = 669;
+			pom1 = 642, pom2 = 0;
+			posx = 20, posy = 668;
+			moveleft = false; moveright = false;  moveup = false; done = false; reset = false;
+		}
 
 		pom1 = 0; pom2 = 0;
 		if (posx > 716){						// spadanie za pierwszym schodem
@@ -220,7 +231,19 @@ int main(void) {
 			if (NOcoin[3] == 0){ liczmonety++; }
 			NOcoin[3] = 1;
 		}
-		// na razie tyle tylko monet 
+		if (posx > 600 && posx < 650 && posy < 515 && posy > 482){
+			if (NOcoin[4] == 0){ liczmonety++; }
+			NOcoin[4] = 1;
+		}
+		if (posx > 210 && posx < 260 && posy < 515 && posy > 482){
+			if (NOcoin[5] == 0){ liczmonety++; }
+			NOcoin[5] = 1;
+		}
+		if (posx > 290 && posx < 340 && posy < 440 && posy > 354){
+			if (NOcoin[6] == 0){ liczmonety++; }
+			NOcoin[6] = 1;
+		}
+		// monet koniec 
 		//
 		//
 		// dojscie do konca :)
@@ -244,6 +267,9 @@ int main(void) {
 				break;
 			case ALLEGRO_KEY_RIGHT:
 				moveright = true;
+				break;
+			case ALLEGRO_KEY_R:
+				reset = true;
 				break;
 			}
 		}
@@ -332,7 +358,15 @@ int main(void) {
 			if (NOcoin[3] == 0){
 				al_draw_bitmap(coin, 786, 579, 0);
 			}
-
+			if (NOcoin[4] == 0){
+				al_draw_bitmap(coin, 630, 515, 0);
+			}
+			if (NOcoin[5] == 0){
+				al_draw_bitmap(coin, 240, 515, 0);
+			}
+			if (NOcoin[6] == 0){
+				al_draw_bitmap(coin, 320, 387, 0);
+			}
 		}
 		al_flip_display();
 	}
