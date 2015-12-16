@@ -24,6 +24,12 @@ int main(void) {
 	ALLEGRO_BITMAP *hero5 = NULL;
 	ALLEGRO_BITMAP *coin = NULL;
 	ALLEGRO_BITMAP *skok = NULL;
+	ALLEGRO_BITMAP *fox = NULL;
+	ALLEGRO_BITMAP *fox1 = NULL;
+	ALLEGRO_BITMAP *fox2 = NULL;
+	ALLEGRO_BITMAP *fox3 = NULL;
+	ALLEGRO_BITMAP *fox4 = NULL;
+	ALLEGRO_BITMAP *fox5 = NULL;
 
 	al_init();
 	al_init_primitives_addon();
@@ -42,6 +48,12 @@ int main(void) {
 	hero5 = al_load_bitmap("hero5.png");
 	coin = al_load_bitmap("coin.png");
 	skok = al_load_bitmap("skok.png");
+	fox = al_load_bitmap("fox.png");
+	fox1 = al_load_bitmap("fox1.png");
+	fox2 = al_load_bitmap("fox2.png");
+	fox3 = al_load_bitmap("fox3.png");
+	fox4 = al_load_bitmap("fox4.png");
+	fox5 = al_load_bitmap("fox5.png");
 	//al_convert_mask_to_alpha(coin, al_map_rgb(255, 255, 255));
 
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
@@ -61,7 +73,9 @@ int main(void) {
 	for (int i = 0; i < 7; i++){
 		NOcoin[i] = 0;
 	}
-	int pom = 0;
+	int pp = 120, kierunek_lisa = 0,pomp=0;
+	int chodzenie_potworka = 0;
+	int pom = 0, sufit;
 	int liczmonety = 0;
 	int frame = 0;
 	int kierunek = 0;
@@ -72,9 +86,9 @@ int main(void) {
 	ALLEGRO_FONT *font44 = al_load_ttf_font("Arial.ttf", 44, 0);
 	
 	al_flip_display();
-	
-	while (done!=true) {
-		if (reset){
+	sufit = 0;
+	while (done!=true) {						
+		if (reset){								// resetownie
 			jump = 0;
 			NOcoin[7];
 			for (int i = 0; i < 7; i++){
@@ -125,6 +139,22 @@ int main(void) {
 		if (posx > 738 && posx < 813){			// podloga na drugim schodku schodku
 			podloga = 579;
 		}
+		if (posx < 687 && posx > 115 && posy>562){	// dó³ pierwszej p³aszczyzny
+			sufit = 580;
+		}
+		else sufit = 0;
+		if (posx < 112 && posx > 20 && posy>496){	// dó³ drugiej p³aszczyzny
+			sufit = 516;
+		}
+		if (posx < 234 && posx > 164 && posy>470 && posy<500){	// dó³ trzeciej p³aszczyzny
+			sufit = 474;
+		}
+		if (posx < 354 && posx > 259 && posy>430 && posy<480){	// dó³ czwartej p³aszczyzny
+			sufit = 452;
+		}
+		if (posx < 619 && posx > 434 && posy>430 && posy<480){	// dó³ piatej p³aszczyzny
+			sufit = 452;
+		}
 
 		if (posy <= 512 && posx < 687 && posx > 115){		/// I wisz¹ca p³aszczyzna 
 			podloga = 512;
@@ -148,7 +178,7 @@ int main(void) {
 				pom1 = 12;
 			}
 		}
-		if (posy <= 406 && posx < 229 && posx > 164){		/// III wisz¹ca p³aszczyzna 
+		if (posy <= 406 && posx < 234 && posx > 164){		/// III wisz¹ca p³aszczyzna 
 			podloga = 406;
 		}
 		if (posy > 406 && posy < 464){
@@ -191,10 +221,7 @@ int main(void) {
 		if (posy < podloga){					// gravity
 			posy ++;
 		}
-		//
-		//
-		//
-		//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// powy¿ej mapa , ponizej bêd¹ pu³apki
 		if (posy >=668 && posy<=670 && posx < 450 && posx > 380){		// pierwsze kolce
 			posx = 20,
@@ -210,9 +237,20 @@ int main(void) {
 			posx = 20,
 			posy = 668;
 		}
-		//
-		//
-		//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// robimy poruszajcego sie lisa
+
+		if (pp < 340 && pomp==0){
+			pp = pp + 1;
+			kierunek_lisa = 0;
+		}
+		else{ pomp = 1; }
+		if (pp > 120 && pomp==1){
+			pp = pp - 1;
+			kierunek_lisa = 1;
+		}
+		else{ pomp = 0; }
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// pulapki prawie dzialajo , teraz kolej na monety 
 		
 		if (posx > 270 && posx < 320 && posy < 670 && posy > 642){
@@ -243,9 +281,22 @@ int main(void) {
 			if (NOcoin[6] == 0){ liczmonety++; }
 			NOcoin[6] = 1;
 		}
-		// monet koniec 
-		//
-		//
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// kolizja z potworkiem
+		if (kierunek_lisa == 0){
+			if (posy >= 485 && posy<516 && posx>pp && posx < pp + 30){
+				posx = 20,
+					posy = 668;
+			}
+		}
+		else{
+				if (posy >= 485 && posy<516 && posx>pp-30 && posx < pp+30){
+					posx = 20,
+					posy = 668;
+				}
+			}
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// dojscie do konca :)
 		if (posx > 570 && posx < 617 && posy > 360 && posy <= 390){
 			done=true;
@@ -296,10 +347,13 @@ int main(void) {
 		if (ev.type == ALLEGRO_EVENT_TIMER) {
 
 			count++;
+			chodzenie_potworka = count % 60;
 			render = true;
 			if (moveup) {
-				jump = 1;
-				posy -= 3;
+				if (posy > sufit){
+					jump = 1;
+					posy -= 3;
+				}
 			}
 			else{ jump = 0; }
 			if (moveleft) {
@@ -326,6 +380,25 @@ int main(void) {
 			al_draw_bitmap(tlo, 0, 0, 0);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 50, 0, "Ilosc monet: %i", liczmonety);
+			if (chodzenie_potworka >= 0 && chodzenie_potworka < 40){
+				al_draw_bitmap(fox, pp, 512, kierunek_lisa);
+			}
+			if (chodzenie_potworka >= 0 && chodzenie_potworka < 10){
+				al_draw_bitmap(fox1, pp, 512, kierunek_lisa);
+			}
+			if (chodzenie_potworka >= 10 && chodzenie_potworka < 20){
+				al_draw_bitmap(fox2, pp, 512, kierunek_lisa);
+			}
+			if (chodzenie_potworka >= 20 && chodzenie_potworka < 30){
+				al_draw_bitmap(fox3, pp, 512, kierunek_lisa);
+			}
+			if (chodzenie_potworka >= 30 && chodzenie_potworka < 40){
+				al_draw_bitmap(fox4, pp, 512, kierunek_lisa);
+			}
+			if (chodzenie_potworka >= 40 && chodzenie_potworka <= 50){
+				al_draw_bitmap(fox5, pp, 512, kierunek_lisa);
+			}
+
 			if (jump == 1){ 
 				al_draw_bitmap(skok, posx, posy, kierunek);
 			}
