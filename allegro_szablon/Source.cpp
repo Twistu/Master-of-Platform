@@ -4,6 +4,9 @@
 #include <allegro5\allegro_font.h>
 #include <allegro5\allegro_ttf.h>
 #include <allegro5\allegro_image.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
+#include <stdio.h>
 
 const float FPS = 60;
 
@@ -30,6 +33,7 @@ int main(void) {
 	ALLEGRO_BITMAP *fox3 = NULL;
 	ALLEGRO_BITMAP *fox4 = NULL;
 	ALLEGRO_BITMAP *fox5 = NULL;
+	ALLEGRO_SAMPLE *dzwiek = NULL;
 
 	al_init();
 	al_init_primitives_addon();
@@ -37,6 +41,7 @@ int main(void) {
 	al_init_ttf_addon();// initialize the ttf (True Type Font) addon
 	al_init_image_addon();
 	al_install_keyboard();
+
 
 	timer = al_create_timer(1.0 / FPS);
 
@@ -54,6 +59,30 @@ int main(void) {
 	fox3 = al_load_bitmap("fox3.png");
 	fox4 = al_load_bitmap("fox4.png");
 	fox5 = al_load_bitmap("fox5.png");
+
+	if (!al_install_audio()){
+		fprintf(stderr, "failed to initialize audio!\n");
+		system("pause");
+		return -1;
+	}
+
+	if (!al_init_acodec_addon()){
+		fprintf(stderr, "failed to initialize audio codecs!\n");
+		system("pause");
+		return -1;
+	}
+
+	if (!al_reserve_samples(1)){
+		fprintf(stderr, "failed to reserve samples!\n");
+		system("pause");
+		return -1;
+	}
+	dzwiek = al_load_sample("moonstone.wav");
+	if (!dzwiek){
+		printf("Audio clip sample not loaded!\n");
+		system("pause");
+		return -1;
+	}
 	//al_convert_mask_to_alpha(coin, al_map_rgb(255, 255, 255));
 
 	al_get_display_mode(al_get_num_display_modes() - 1, &disp_data);
@@ -85,9 +114,13 @@ int main(void) {
 	bool moveleft = false, moveright = false; bool moveup = false; bool done = false; bool reset = false;
 	ALLEGRO_FONT *font44 = al_load_ttf_font("Arial.ttf", 44, 0);
 	
-	al_flip_display();
 	sufit = 0;
-	while (done!=true) {						
+	
+	al_play_sample(dzwiek, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+
+	while (done!=true) {	
+		ALLEGRO_EVENT ev;
+		al_wait_for_event(event_queue, &ev);
 		if (reset){								// resetownie
 			jump = 0;
 			NOcoin[7];
@@ -156,7 +189,7 @@ int main(void) {
 			sufit = 452;
 		}
 
-		if (posy <= 512 && posx < 687 && posx > 115){		/// I wisz¹ca p³aszczyzna 
+		if (posy <= 512 && posx < 693 && posx > 115){		/// I wisz¹ca p³aszczyzna 
 			podloga = 512;
 		}
 		if (posy > 512 && posy < 570 ){
@@ -233,9 +266,14 @@ int main(void) {
 			posy = 668;
 
 		}
-		if (posy >= 405 && posy <= 403 && posx > 150 && posx < 245){		// trzecie kolce // nie dzia³a powód -- niezidentyfikowany
+		if (posy >= 405 && posy <= 410 && posx < 234 && posx > 190){		// trzecie kolce 
 			posx = 20,
 			posy = 668;
+		}
+		if (posy >= 668 && posy <= 670 && posx < 960 && posx > 880){		// na dole po prawej kolce
+			posx = 20,
+			posy = 668;
+
 		}
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// robimy poruszajcego sie lisa
@@ -251,7 +289,7 @@ int main(void) {
 		}
 		else{ pomp = 0; }
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// pulapki prawie dzialajo , teraz kolej na monety 
+		// pulapki dzialajo , teraz kolej na monety 
 		
 		if (posx > 270 && posx < 320 && posy < 670 && posy > 642){
 			if (NOcoin[0] == 0){ liczmonety++; }
@@ -301,8 +339,7 @@ int main(void) {
 		if (posx > 570 && posx < 617 && posy > 360 && posy <= 390){
 			done=true;
 		}
-		ALLEGRO_EVENT ev;
-		al_wait_for_event(event_queue, &ev);
+
 		
 		if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
 		{
@@ -361,7 +398,7 @@ int main(void) {
 				kierunek = 1;
 				frame = (frame + 3) % 100;
 				if (posx > pom2){
-					posx -= 2;
+					posx -= 1;
 				}
 			}
 			if (moveright) {
@@ -369,7 +406,7 @@ int main(void) {
 				frame = (frame + 3) % 100;
 				kierunek = 0;
 				if (posx < pom1){
-					posx += 2;
+					posx += 1;
 				}
 			}
 			else if (!moveright && !moveleft){ pom = 0; }
@@ -380,22 +417,22 @@ int main(void) {
 			al_draw_bitmap(tlo, 0, 0, 0);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
 			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 50, 0, "Ilosc monet: %i", liczmonety);
-			if (chodzenie_potworka >= 0 && chodzenie_potworka < 40){
+			if (chodzenie_potworka >= 0 && chodzenie_potworka < 10){
 				al_draw_bitmap(fox, pp, 512, kierunek_lisa);
 			}
-			if (chodzenie_potworka >= 0 && chodzenie_potworka < 10){
+			if (chodzenie_potworka >= 10 && chodzenie_potworka < 20){
 				al_draw_bitmap(fox1, pp, 512, kierunek_lisa);
 			}
-			if (chodzenie_potworka >= 10 && chodzenie_potworka < 20){
+			if (chodzenie_potworka >= 20 && chodzenie_potworka < 30){
 				al_draw_bitmap(fox2, pp, 512, kierunek_lisa);
 			}
-			if (chodzenie_potworka >= 20 && chodzenie_potworka < 30){
+			if (chodzenie_potworka >= 30 && chodzenie_potworka < 40){
 				al_draw_bitmap(fox3, pp, 512, kierunek_lisa);
 			}
-			if (chodzenie_potworka >= 30 && chodzenie_potworka < 40){
+			if (chodzenie_potworka >= 40 && chodzenie_potworka < 60){
 				al_draw_bitmap(fox4, pp, 512, kierunek_lisa);
 			}
-			if (chodzenie_potworka >= 40 && chodzenie_potworka <= 50){
+			if (chodzenie_potworka >= 50 && chodzenie_potworka <= 60){
 				al_draw_bitmap(fox5, pp, 512, kierunek_lisa);
 			}
 
@@ -443,9 +480,13 @@ int main(void) {
 		}
 		al_flip_display();
 	}
+	//al_stop_samples();
 	//al_rest(20.0);
 	al_destroy_event_queue(event_queue);
 	al_destroy_display(display);
+	al_destroy_font(font44);
+	al_destroy_timer(timer);
+	al_destroy_sample(dzwiek);
 
 	return 0;
 }
