@@ -20,6 +20,7 @@ int main(void) {
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_BITMAP *tlo = NULL;
+	ALLEGRO_BITMAP *koniec = NULL;
 	ALLEGRO_BITMAP *hero = NULL;
 	ALLEGRO_BITMAP *hero2 = NULL;
 	ALLEGRO_BITMAP *hero3 = NULL;
@@ -45,20 +46,56 @@ int main(void) {
 
 	timer = al_create_timer(1.0 / FPS);
 
-	tlo = al_load_bitmap("tlo.jpg");
-	hero = al_load_bitmap("hero.png");
-	hero2 = al_load_bitmap("hero2.png");
-	hero3 = al_load_bitmap("hero3.png");
-	hero4 = al_load_bitmap("hero4.png");
-	hero5 = al_load_bitmap("hero5.png");
-	coin = al_load_bitmap("coin.png");
-	skok = al_load_bitmap("skok.png");
-	fox = al_load_bitmap("fox.png");
-	fox1 = al_load_bitmap("fox1.png");
-	fox2 = al_load_bitmap("fox2.png");
-	fox3 = al_load_bitmap("fox3.png");
-	fox4 = al_load_bitmap("fox4.png");
-	fox5 = al_load_bitmap("fox5.png");
+	tlo = al_load_bitmap("grafika/tlo.jpg");
+	koniec = al_load_bitmap("grafika/win.png");
+	hero = al_load_bitmap("grafika/hero.png");
+	hero2 = al_load_bitmap("grafika/hero2.png");
+	hero3 = al_load_bitmap("grafika/hero3.png");
+	hero4 = al_load_bitmap("grafika/hero4.png");
+	hero5 = al_load_bitmap("grafika/hero5.png");
+	coin = al_load_bitmap("grafika/coin.png");
+	skok = al_load_bitmap("grafika/skok.png");
+	fox = al_load_bitmap("grafika/fox.png");
+	fox1 = al_load_bitmap("grafika/fox1.png");
+	fox2 = al_load_bitmap("grafika/fox2.png");
+	fox3 = al_load_bitmap("grafika/fox3.png");
+	fox4 = al_load_bitmap("grafika/fox4.png");
+	fox5 = al_load_bitmap("grafika/fox5.png");
+	if (koniec == NULL){
+		printf( " Koniec nie dziala\n");
+		system("pause");
+		//return 0;
+	}
+	if (tlo == NULL){
+		printf("Tlo nie dziala\n");
+		system("pause");
+		//return 0;
+	}
+	if (hero == NULL){
+		printf("Hero nie dziala\n");
+		system("pause");
+		//return 0;
+	}
+	if (hero2 == NULL){
+		printf("Hero2 nie dziala\n");
+		system("pause");
+		//return 0;
+	}
+	if (hero3 == NULL){
+		printf("Hero3 nie dziala\n");
+		system("pause");
+		//return 0;
+	}
+	if (hero4 == NULL){
+		printf("Hero4 nie dziala\n");
+		system("pause");
+		//return 0;
+	}
+	if (hero5 == NULL){
+		printf("Hero5 nie dziala\n");
+		system("pause");
+		//return 0;
+	}
 
 	if (!al_install_audio()){
 		fprintf(stderr, "failed to initialize audio!\n");
@@ -77,7 +114,7 @@ int main(void) {
 		system("pause");
 		return -1;
 	}
-	dzwiek = al_load_sample("moonstone.wav");
+	dzwiek = al_load_sample("muzyka/moonstone.wav");
 	if (!dzwiek){
 		printf("Audio clip sample not loaded!\n");
 		system("pause");
@@ -111,13 +148,12 @@ int main(void) {
 	int count = 0, podloga = 669;
 	int pom1 = 642, pom2=0;		// pomocnicze pomagaj¹ce wykrywac kolizje z lewej(pom2) i prawej strony (pom1)
 	int posx = 20, posy = 668;
-	bool moveleft = false, moveright = false; bool moveup = false; bool done = false; bool reset = false;
+	bool moveleft = false, moveright = false; bool moveup = false; bool done = false; bool reset = false, start = true, end = false;
 	ALLEGRO_FONT *font44 = al_load_ttf_font("Arial.ttf", 44, 0);
 	
 	sufit = 0;
 	
 	al_play_sample(dzwiek, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
-
 	while (done!=true) {	
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(event_queue, &ev);
@@ -192,7 +228,7 @@ int main(void) {
 		if (posy <= 512 && posx < 693 && posx > 115){		/// I wisz¹ca p³aszczyzna 
 			podloga = 512;
 		}
-		if (posy > 512 && posy < 570 ){
+		if (posy > 513 && posy < 570 ){
 			if (posx>300){
 				pom2 = 705;
 			}
@@ -337,7 +373,7 @@ int main(void) {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// dojscie do konca :)
 		if (posx > 570 && posx < 617 && posy > 360 && posy <= 390){
-			done=true;
+			end =true;
 		}
 
 		
@@ -414,68 +450,73 @@ int main(void) {
 		}
 		if (render && al_is_event_queue_empty(event_queue)){
 			al_clear_to_color(al_map_rgb(0, 0, 0));
-			al_draw_bitmap(tlo, 0, 0, 0);
-			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
-			al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 50, 0, "Ilosc monet: %i", liczmonety);
-			if (chodzenie_potworka >= 0 && chodzenie_potworka < 10){
-				al_draw_bitmap(fox, pp, 512, kierunek_lisa);
-			}
-			if (chodzenie_potworka >= 10 && chodzenie_potworka < 20){
-				al_draw_bitmap(fox1, pp, 512, kierunek_lisa);
-			}
-			if (chodzenie_potworka >= 20 && chodzenie_potworka < 30){
-				al_draw_bitmap(fox2, pp, 512, kierunek_lisa);
-			}
-			if (chodzenie_potworka >= 30 && chodzenie_potworka < 40){
-				al_draw_bitmap(fox3, pp, 512, kierunek_lisa);
-			}
-			if (chodzenie_potworka >= 40 && chodzenie_potworka < 60){
-				al_draw_bitmap(fox4, pp, 512, kierunek_lisa);
-			}
-			if (chodzenie_potworka >= 50 && chodzenie_potworka <= 60){
-				al_draw_bitmap(fox5, pp, 512, kierunek_lisa);
-			}
-
-			if (jump == 1){ 
-				al_draw_bitmap(skok, posx, posy, kierunek);
+			if (end == true){
+				al_draw_bitmap(koniec, 0, 0, 0);
 			}
 			else{
-				if (frame == 0 || pom==0){
-					al_draw_bitmap(hero, posx, posy, kierunek);
+				al_draw_bitmap(tlo, 0, 0, 0);
+				al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 0, 0, "%i", count);
+				al_draw_textf(font44, al_map_rgb(126, 126, 126), 0, 50, 0, "Ilosc monet: %i", liczmonety);
+				if (chodzenie_potworka >= 0 && chodzenie_potworka < 10){
+					al_draw_bitmap(fox, pp, 512, kierunek_lisa);
 				}
-				if (frame > 0 && frame <= 25 && pom==1){
-					al_draw_bitmap(hero5, posx, posy, kierunek);
+				if (chodzenie_potworka >= 10 && chodzenie_potworka < 20){
+					al_draw_bitmap(fox1, pp, 512, kierunek_lisa);
 				}
-				if (frame > 25 && frame <= 50 && pom == 1){
-					al_draw_bitmap(hero4, posx, posy, kierunek);
+				if (chodzenie_potworka >= 20 && chodzenie_potworka < 30){
+					al_draw_bitmap(fox2, pp, 512, kierunek_lisa);
 				}
-				if (frame > 50 && frame <= 75 && pom == 1){
-					al_draw_bitmap(hero3, posx, posy, kierunek);
+				if (chodzenie_potworka >= 30 && chodzenie_potworka < 40){
+					al_draw_bitmap(fox3, pp, 512, kierunek_lisa);
 				}
-				if (frame > 75 && frame < 100 && pom == 1){
-					al_draw_bitmap(hero2, posx, posy, kierunek);
+				if (chodzenie_potworka >= 40 && chodzenie_potworka < 60){
+					al_draw_bitmap(fox4, pp, 512, kierunek_lisa);
 				}
-			}
-			if (NOcoin[0] == 0){ 
-				al_draw_bitmap(coin, 300, 675, 0); 
-			}
-			if (NOcoin[1] == 0){
-				al_draw_bitmap(coin, 600, 675, 0);
-			}
-			if (NOcoin[2] == 0){
-				al_draw_bitmap(coin, 419, 630, 0);
-			}
-			if (NOcoin[3] == 0){
-				al_draw_bitmap(coin, 786, 579, 0);
-			}
-			if (NOcoin[4] == 0){
-				al_draw_bitmap(coin, 630, 515, 0);
-			}
-			if (NOcoin[5] == 0){
-				al_draw_bitmap(coin, 240, 515, 0);
-			}
-			if (NOcoin[6] == 0){
-				al_draw_bitmap(coin, 320, 387, 0);
+				if (chodzenie_potworka >= 50 && chodzenie_potworka <= 60){
+					al_draw_bitmap(fox5, pp, 512, kierunek_lisa);
+				}
+
+				if (jump == 1){
+					al_draw_bitmap(skok, posx, posy, kierunek);
+				}
+				else{
+					if (frame == 0 || pom == 0){
+						al_draw_bitmap(hero, posx, posy, kierunek);
+					}
+					if (frame > 0 && frame <= 25 && pom == 1){
+						al_draw_bitmap(hero5, posx, posy, kierunek);
+					}
+					if (frame > 25 && frame <= 50 && pom == 1){
+						al_draw_bitmap(hero4, posx, posy, kierunek);
+					}
+					if (frame > 50 && frame <= 75 && pom == 1){
+						al_draw_bitmap(hero3, posx, posy, kierunek);
+					}
+					if (frame > 75 && frame < 100 && pom == 1){
+						al_draw_bitmap(hero2, posx, posy, kierunek);
+					}
+				}
+				if (NOcoin[0] == 0){
+					al_draw_bitmap(coin, 300, 675, 0);
+				}
+				if (NOcoin[1] == 0){
+					al_draw_bitmap(coin, 600, 675, 0);
+				}
+				if (NOcoin[2] == 0){
+					al_draw_bitmap(coin, 419, 630, 0);
+				}
+				if (NOcoin[3] == 0){
+					al_draw_bitmap(coin, 786, 579, 0);
+				}
+				if (NOcoin[4] == 0){
+					al_draw_bitmap(coin, 630, 515, 0);
+				}
+				if (NOcoin[5] == 0){
+					al_draw_bitmap(coin, 240, 515, 0);
+				}
+				if (NOcoin[6] == 0){
+					al_draw_bitmap(coin, 320, 387, 0);
+				}
 			}
 		}
 		al_flip_display();
